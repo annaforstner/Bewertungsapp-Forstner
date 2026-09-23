@@ -1,6 +1,6 @@
-# Bewertungsapp- <Anna Forstner>
+# Bewertungsapp- Anna Forstner
 
-Klasse: <4a APC>
+Klasse: 4a APC
 
 ## Setup
 
