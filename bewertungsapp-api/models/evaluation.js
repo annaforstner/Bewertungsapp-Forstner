@@ -10,17 +10,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Evaluation.belongsTo(models.Project, {
-        foreignKey: 'projectId'
-      });
-
-      Evaluation.belongsTo(models.Criterion, {
-        foreignKey: 'criterionId'
-      });
-
-      Evaluation.belongsTo(models.Juror, {
-        foreignKey: 'jurorId'
-      });
+      Evaluation.belongsTo(models.Project, { foreignKey: 'projectId' });
+      Evaluation.belongsTo(models.Criterion, { foreignKey: 'criterionId' });
+      Evaluation.belongsTo(models.Juror, { foreignKey: 'jurorId' });
     }
   }
   Evaluation.init({
@@ -30,8 +22,19 @@ module.exports = (sequelize, DataTypes) => {
     score: DataTypes.INTEGER,
     comment: DataTypes.TEXT
   }, {
+    /**Als Nächstes ergänzen wir den Unique-Index.
+     * Er sorgt dafür, dass derselbe Juror dasselbe Kriterium für dasselbe Projekt nur einmal bewerten kann.
+     * Die Kombination der drei Felder muss eindeutig sein.
+     * Ein Juror darf also weiterhin andere Projekte oder andere Kriterien bewerten. */
     sequelize,
     modelName: 'Evaluation',
+    indexes: [
+      {
+        name: 'evaluations_project_criterion_juror_unique',
+        unique: true,
+        fields: ['projectId', 'criterionId', 'jurorId']
+      }
+    ],
   });
   return Evaluation;
 };
