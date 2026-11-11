@@ -1,0 +1,951 @@
+{
+  "info": {
+    "name": "Bewertungsapp – Einheit 5",
+    "description": "In Reihenfolge ausführen. Kriterien und Juror müssen vorhanden sein (siehe Testbericht). Team und Projekt für die Bewertungen bleiben als Testdaten erhalten.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "teamId",
+      "value": ""
+    },
+    {
+      "key": "projectId",
+      "value": ""
+    },
+    {
+      "key": "deleteTeamId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Team",
+      "item": [
+        {
+          "name": "Team anlegen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/teams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman-Testteam\",\n  \"klasse\": \"4a APC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 201\", () => pm.response.to.have.status(201));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.be.a(\"number\");",
+                  "  pm.expect(json.name).to.eql(\"Postman-Testteam\");",
+                  "  pm.collectionVariables.set(\"teamId\", json.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Teams auflisten",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/teams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 200\", () => pm.response.to.have.status(200));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an(\"array\");",
+                  "  pm.expect(json.some(t => t.id === Number(pm.collectionVariables.get(\"teamId\")))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Team abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/teams/{{teamId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams",
+                "{{teamId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 200\", () => pm.response.to.have.status(200));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(Number(pm.collectionVariables.get(\"teamId\")));",
+                  "  pm.expect(json.klasse).to.eql(\"4a APC\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Team ändern",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/teams/{{teamId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams",
+                "{{teamId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman-Testteam geändert\",\n  \"klasse\": \"4a APC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 200\", () => pm.response.to.have.status(200));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.name).to.eql(\"Postman-Testteam geändert\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negativ: Klasse fehlt",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/teams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unvollständig\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 400\", () => pm.response.to.have.status(400));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negativ: ID ist Text",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/teams/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams",
+                "abc"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 400\", () => pm.response.to.have.status(400));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 Projekt",
+      "item": [
+        {
+          "name": "Projekt anlegen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teamId\": {{teamId}},\n  \"titel\": \"Postman-Testprojekt\",\n  \"beschreibung\": \"Temporäres Projekt für Einheit 5\",\n  \"praesentiertAm\": \"2026-06-12\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 201\", () => pm.response.to.have.status(201));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.be.a(\"number\");",
+                  "  pm.expect(json.teamId).to.eql(Number(pm.collectionVariables.get(\"teamId\")));",
+                  "  pm.collectionVariables.set(\"projectId\", json.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Projekte auflisten",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 200\", () => pm.response.to.have.status(200));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an(\"array\");",
+                  "  pm.expect(json.some(p => p.id === Number(pm.collectionVariables.get(\"projectId\")))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Projekt mit Team abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 200\", () => pm.response.to.have.status(200));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(Number(pm.collectionVariables.get(\"projectId\")));",
+                  "  pm.expect(json.Team.id).to.eql(Number(pm.collectionVariables.get(\"teamId\")));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Projekt ändern",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teamId\": {{teamId}},\n  \"titel\": \"Postman-Testprojekt geändert\",\n  \"beschreibung\": \"Temporäres Projekt für Einheit 5\",\n  \"praesentiertAm\": \"2026-06-12\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 200\", () => pm.response.to.have.status(200));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.titel).to.eql(\"Postman-Testprojekt geändert\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Projekt löschen",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 204\", () => pm.response.to.have.status(204));",
+                  "// 204 darf keinen Antworttext enthalten.",
+                  "pm.test(\"Antwort ist leer\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negativ: Gelöschtes Projekt abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 404\", () => pm.response.to.have.status(404));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 Bewertung",
+      "item": [
+        {
+          "name": "Testprojekt für Bewertungen anlegen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/projects",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teamId\": {{teamId}},\n  \"titel\": \"Postman-Auswertung\",\n  \"beschreibung\": \"Temporäres Projekt für Einheit 5\",\n  \"praesentiertAm\": \"2026-06-12\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 201\", () => pm.response.to.have.status(201));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.be.a(\"number\");",
+                  "  pm.collectionVariables.set(\"projectId\", json.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negativ: Pflichtfelder fehlen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/evaluations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluations"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{projectId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 400\", () => pm.response.to.have.status(400));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bewertung für erstes Kriterium anlegen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/evaluations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluations"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{projectId}},\n  \"criterionId\": {{criterionId}},\n  \"jurorId\": {{jurorId}},\n  \"score\": 8,\n  \"comment\": \"Postman-Testbewertung\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 201\", () => pm.response.to.have.status(201));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.be.a(\"number\");",
+                  "  pm.expect(json.score).to.eql(8);",
+                  "  pm.expect(json.projectId).to.eql(Number(pm.collectionVariables.get(\"projectId\")));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negativ: Doppelte Bewertung",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/evaluations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluations"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{projectId}},\n  \"criterionId\": {{criterionId}},\n  \"jurorId\": {{jurorId}},\n  \"score\": 8,\n  \"comment\": \"Postman-Testbewertung\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 409\", () => pm.response.to.have.status(409));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bewertung für zweites Kriterium anlegen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/evaluations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "evaluations"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{projectId}},\n  \"criterionId\": {{zweitesKriteriumId}},\n  \"jurorId\": {{jurorId}},\n  \"score\": 6,\n  \"comment\": \"Postman-Testbewertung\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 201\", () => pm.response.to.have.status(201));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.score).to.eql(6);",
+                  "  pm.expect(json.criterionId).to.eql(Number(pm.environment.get(\"zweitesKriteriumId\")));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 Auswertung",
+      "item": [
+        {
+          "name": "Durchschnitt je Kriterium",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}/statistik",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}",
+                "statistik"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 200\", () => pm.response.to.have.status(200));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an(\"array\");",
+                  "  pm.expect(json).to.have.lengthOf(2);",
+                  "  const werte = Object.fromEntries(json.map(row => [row.criterionId, Number(row.durchschnitt)]));",
+                  "  pm.expect(werte[pm.environment.get(\"criterionId\")]).to.eql(8);",
+                  "  pm.expect(werte[pm.environment.get(\"zweitesKriteriumId\")]).to.eql(6);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negativ: Bewertetes Projekt löschen",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/projects/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "projects",
+                "{{projectId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 409\", () => pm.response.to.have.status(409));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 Team-Löschtest",
+      "item": [
+        {
+          "name": "Unbenutztes Team anlegen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/teams",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Postman-Löschtest\",\n  \"klasse\": \"4a APC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 201\", () => pm.response.to.have.status(201));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.be.a(\"number\");",
+                  "  pm.collectionVariables.set(\"deleteTeamId\", json.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unbenutztes Team löschen",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/teams/{{deleteTeamId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams",
+                "{{deleteTeamId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 204\", () => pm.response.to.have.status(204));",
+                  "// 204 darf keinen Antworttext enthalten.",
+                  "pm.test(\"Antwort ist leer\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negativ: Gelöschtes Team abrufen",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/teams/{{deleteTeamId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "teams",
+                "{{deleteTeamId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Prüft den HTTP-Status.",
+                  "pm.test(\"Status ist 404\", () => pm.response.to.have.status(404));",
+                  "// Prüft die Antwort und merkt sich bei Bedarf die erzeugte ID.",
+                  "pm.test(\"Antwort entspricht der Erwartung\", () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.error).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
