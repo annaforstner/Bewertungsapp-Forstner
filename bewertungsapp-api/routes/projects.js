@@ -4,7 +4,8 @@ const express = require('express');
 const router = express.Router();
 
 // Lädt die Models für Projekte, Teams und Bewertungen.
-const { Project, Team, Evaluation } = require('../models');
+// Lädt auch Criterion, damit die Antwort den Namen des Kriteriums enthält.
+const { Project, Team, Evaluation, Criterion } = require('../models');
 
 // Stellt Funktionen für SQL-Aggregationen und Spaltenverweise bereit.
 const { fn, col } = require('sequelize');
@@ -265,6 +266,35 @@ router.get('/:id/statistik', async (req, res) => {
 
   // Gibt die Durchschnittswerte zurück; ohne Bewertungen eine leere Liste.
   res.json(statistik);
+});
+
+// Gibt die bisherigen Einzelbewertungen eines Projekts zurück.
+router.get('/:id/evaluations', async (req, res) => {
+  const id = Number(req.params.id);
+
+  // Prüft die Projekt-ID aus der URL.
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    return res.status(400).json({
+      error: 'Die Projekt-ID muss eine positive ganze Zahl sein'
+    });
+  }
+
+  // Meldet 404, wenn das Projekt nicht existiert.
+  const project = await Project.findByPk(id);
+  if (!project) {
+    return res.status(404).json({ error: 'Projekt nicht gefunden' });
+  }
+
+  // Lädt nur Bewertungen dieses Projekts und ergänzt den Kriteriumsnamen.
+  const evaluations = await Evaluation.findAll({
+    where: { projectId: id },
+    attributes: ['id', 'score', 'comment'],
+    include: [{ model: Criterion, attributes: ['name'] }],
+    order: [['id', 'ASC']]
+  });
+
+  // Ohne Bewertungen ist die Antwort eine leere Liste.
+  res.json(evaluations);
 });
 
 module.exports = router;

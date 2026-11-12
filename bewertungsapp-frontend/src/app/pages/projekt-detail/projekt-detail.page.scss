@@ -1,0 +1,54 @@
+/* Verwendet dieselben Farben wie der Kopf der Projektliste. */
+ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+/* Hebt den Projekttitel hervor und gibt der Beschreibung mehr Luft. */
+ion-content h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+ion-content p {
+  line-height: 1.5;
+}
+
+/* Trennt den Bewertungsbereich sichtbar von der Projektbeschreibung. */
+ion-content h2 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.2rem;
+  font-weight: 650;
+}
+
+/* Zeigt die Bewertungen als Karten auf dem Seitenhintergrund. */
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+ion-item {
+  --background: var(--ion-card-background, var(--ion-background-color));
+  --inner-border-width: 0;
+  --border-radius: 14px;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--ion-color-medium);
+  border-inline-start: 4px solid var(--ion-color-medium);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Betont den Kriteriumsnamen und lässt längere Kommentare umbrechen. */
+ion-label h3 {
+  font-weight: 700;
+}
+
+ion-item ion-label {
+  white-space: normal;
+}
+
+ion-label p {
+  margin: 0.25rem 0 0;
+  color: var(--ion-text-color);
+}

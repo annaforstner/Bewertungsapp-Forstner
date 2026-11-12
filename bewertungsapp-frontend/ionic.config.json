@@ -1,0 +1,7 @@
+{
+  "name": "bewertungsapp-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

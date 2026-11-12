@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Projekte</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Zeigt je nach Zustand den Ladehinweis, einen Fehler oder die Projektliste. -->
+  @if (loading()) {
+  <p>Projekte werden geladen …</p>
+  } @else if (error()) {
+  <p role="alert">{{ error() }}</p>
+  } @else if (projects().length === 0) {
+  <p>Es sind noch keine Projekte vorhanden.</p>
+  } @else {
+  <!-- Zeigt für jedes Projekt den Titel und den Namen des Teams. -->
+  <ion-list>
+    @for (project of projects(); track project.id) {
+    <!-- Öffnet beim Anklicken die Detailseite für genau dieses Projekt. -->
+    <ion-item [routerLink]="['/projekt-detail', project.id]" [detail]="true">
+      <ion-label>
+        <h2>{{ project.titel }}</h2>
+        <p>Team: {{ project.Team?.name ?? 'Kein Team zugeordnet' }}</p>
+      </ion-label>
+    </ion-item>
+    }
+  </ion-list>
+  }
+</ion-content>

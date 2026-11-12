@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <!-- Führt zurück zur Projektliste, auch bei direkt geöffneter Detail-URL. -->
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text="Zurück"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Projektdetails</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Zeigt nach dem Laden Titel, Team und Beschreibung an. -->
+  @if (loading()) {
+    <p>Projekt wird geladen …</p>
+  } @else if (error()) {
+    <p role="alert">{{ error() }}</p>
+  } @else if (project(); as daten) {
+    <h1>{{ daten.titel }}</h1>
+    <p>Team: {{ daten.Team?.name ?? 'Kein Team zugeordnet' }}</p>
+    <p>{{ daten.beschreibung }}</p>
+    <!-- Zeigt die bisherigen Einzelbewertungen unter der Projektbeschreibung. -->
+<h2>Bisherige Bewertungen</h2>
+
+@if (evaluationsLoading()) {
+  <p>Bewertungen werden geladen …</p>
+} @else if (evaluationsError()) {
+  <p role="alert">{{ evaluationsError() }}</p>
+} @else if (evaluations().length === 0) {
+  <p>Für dieses Projekt gibt es noch keine Bewertungen.</p>
+} @else {
+  <ion-list>
+    @for (evaluation of evaluations(); track evaluation.id) {
+      <ion-item>
+        <ion-label>
+          <h3>{{ evaluation.Criterion?.name ?? 'Unbekanntes Kriterium' }}</h3>
+          <p>{{ evaluation.score }} Punkte</p>
+          <p>{{ evaluation.comment }}</p>
+        </ion-label>
+      </ion-item>
+    }
+  </ion-list>
+}
+  }
+</ion-content>
